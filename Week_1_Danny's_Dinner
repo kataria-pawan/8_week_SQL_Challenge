@@ -180,4 +180,20 @@ order by 1;
  # Giving point to sushi a 20 points when you purchase it and another than that customer get the 10 points, in that case we use Case Fucntion
  
  
+# Question _10:
+ --In the first week after a customer joins the program (including their join date) they earn 2x points on all items,
+-- not just sushi - how many points do customer A and B have at the end of January?
+WITH jan_point as (
+         SELECT *,
+         ADDDATE(join_date,7) as valid_date ,
+         Last_day("2021-01-01") as lastday
+         FROM members)
+SELECT S.customer_id,
+       SUM( CASE WHEN S.order_date between join_date and valid_date THEN price*20 END) as point_earned
+FROM jan_point j inner join sales S
+ON J.customer_id = S.customer_id
+inner join menu M 
+ON S.product_id = M.product_id
+WHERE S.order_date<= lastday
+GROUP BY S.customer_id;
  
