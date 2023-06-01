@@ -1,4 +1,5 @@
 # 8_week_SQL_Challenge
+These case studies have been performend on MySQL.
 
 ### Table of Contents
 Case Study #1: Danny's Diner
