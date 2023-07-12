@@ -17170,3 +17170,57 @@ select
 from weekly_sales);
 
 select * from clean_weekly_sales;
+
+						# 2. Data Exploration
+# Question_1: What day of the week is used for each week_date value?
+SELECT DISTINCT(dayname(week_date)) AS week_date_value
+FROM clean_weekly_sales;
+
+# Question_2: What range of week numbers are missing from the dataset?
+
+# Question_3: How many total transactions were there for each year in the dataset?
+select year, sum(transactions)
+from clean_weekly_sales
+group by year
+order by year;
+
+# Question_4: What is the total sales for each region for each month?
+select region, month_number, sum(sales)
+from clean_weekly_sales
+group by 1,2
+order by 1,2;
+
+# Question_5: What is the total count of transactions for each platform?
+select platform, count(transactions)
+from clean_weekly_sales
+group by 1;
+
+# Question_6: What is the percentage of sales for Retail vs Shopify for each month?
+select monthname(week_date), year,
+ROUND(100 * sum(CASE WHEN platform = 'Retail' THEN sales ELSE NULL END) / SUM(sales),2) AS retail_percentage,
+		ROUND(100 *sum(CASe WHEN platform = 'Shopify' THEN sales ELSE NULL END) / SUM(sales),2) AS shopify_percentage
+from clean_weekly_sales
+group by 1,2;
+
+# Question_7: What is the percentage of sales by demographic for each year in the dataset?
+select year, 
+round(100* sum(case when demographic = 'Couples' THEN sales ELSE NULL END) / SUM(sales),2) AS couples_percentage,
+round(100* sum(case when demographic = 'Families' THEN sales ELSE NULL END) / SUM(sales),2) AS families_percentage,
+round(100* sum(case when demographic = 'unknown' THEN sales ELSE NULL END) / SUM(sales),2) AS unknown_percentage
+from clean_weekly_sales
+group by year;
+
+# Question_8: Which age_band and demographic values contribute the most to Retail sales?
+select age_band, demographic, sum(sales)
+from clean_weekly_sales
+where platform = 'Retail'
+group by 1,2
+order by 3;
+
+# Queston_9: Can we use the avg_transaction column to find the average transaction size for each year for Retail vs Shopify? If not - how would you calculate it instead?
+select year, platform,
+		round(avg(avg_transaction),1) as avg_trans_row,
+        round(sum(sales) / sum(transactions),2) as avg_trans_group
+from clean_weekly_sales
+group by 1,2
+order by 1;
